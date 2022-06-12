@@ -1,11 +1,31 @@
 * {
   font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.layout {
+  height: 100%;
+  width: 99.9%;
+  border: #cccccc 1px solid;
+  display: flex;
+}
+
+.mapArea {
+  width: 80%;
+}
+
+.savedData {
+  padding: 1rem;
+  width: 20%;
+  height: 100%;
 }
 
 .map {
   width: 100%;
-  height: 800px;
+  height: 900px;
 }
+
 .ol-popup {
   position: absolute;
   background-color: white;

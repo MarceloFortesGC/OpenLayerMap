@@ -4,16 +4,59 @@
     <meta charset="UTF-8" />
     <title>Popup</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
-    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,TextDecoder"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.18.3/minified.js"></script>
+    <script type="module" src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    <script type="module" src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,TextDecoder"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.18.3/minified.js"></script>
   </head>
   <body>
-    <div id="map" class="map"></div>
-    <div id="popup" class="ol-popup">
-      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-      <div id="popup-content"></div>
+    <div class="layout">
+      <div class="mapArea">
+        <div id="map" class="map"></div>
+        <div id="popup" class="ol-popup">
+          <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+          <div id="popup-content"></div>
+        </div>
+      </div>
+      <div class="savedData">
+        <div class="savedData__header">
+          <h2>🚩 Locais Salvos</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Localização</th>
+                <th>Salvo em memória</th>
+                <th>Salvo no banco</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="position"></td>
+                <td class="savedInMemory"></td>
+                <td class="savedInDB"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
     </div>
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
+  <script>
+    function insert(coord) {
+      var position = document.createElement('td');
+      var savedInMemory = document.createElement('td');
+      var savedInDB = document.createElement('td');
+
+
+      position.innerHTML = coord;
+      savedInMemory.innerHTML = '✔';
+      savedInDB.innerHTML = '❌';
+
+      document.querySelector('.position').appendChild(position);
+      document.querySelector('.savedInMemory').appendChild(savedInMemory);
+      document.querySelector('.savedInDB').appendChild(savedInDB);
+    }
+  </script>
 </html>

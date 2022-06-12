@@ -10,6 +10,7 @@ import { toStringHDMS } from "ol/coordinate";
 const container = document.getElementById("popup");
 const content = document.getElementById("popup-content");
 const closer = document.getElementById("popup-closer");
+const savedItems = document.getElementById("savedItems");
 
 const overlay = new Overlay({
   element: container
@@ -21,7 +22,7 @@ closer.onclick = function () {
   return false;
 };
 
-const key = "alZTa2N5ZHJzSjJqZjU4NDRBT3U";
+const key = "jVSkcydrsJ2jf5844AOu";
 const attributions =
   '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> ' +
   '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>';
@@ -39,21 +40,18 @@ const map = new Map({
   overlays: [overlay],
   target: "map",
   view: new View({
-    center: [0, 0],
-    zoom: 3
+    center: [-54.54989633017405, -25.519517238580367],
+    zoom: 4
   })
 });
 
 map.on("singleclick", function (evt) {
   const coordinate = evt.coordinate;
-  const coodenadas = toStringHDMS(toLonLat(coordinate));
+  const coord = toStringHDMS(toLonLat(coordinate));
 
   content.innerHTML = `<p>Você clicou em:</p>
-  <code>${coodenadas}</code>
-  <button onclick="insert()" >Salvar</button>`;
+  <code>${coord}</code></br></br>
+  <input type="text" id="description"></input>
+  <button onclick="insert('${coord}')">Salvar</button>`;
   overlay.setPosition(coordinate);
-
-  function insert() {
-    alert("Salvo");
-  }
 });
