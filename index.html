@@ -2,26 +2,29 @@
 <html lang="pt_BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Popup</title>
+    <title>Entrega 1 - Junho - Marcelo</title>
     <link rel="stylesheet" href="style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script type="module" src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
     <script type="module" src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,TextDecoder"></script>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.18.3/minified.js"></script>
   </head>
   <body>
-    <div class="layout">
-      <div class="mapArea">
+    <div class="row layout" style="margin: 0;">
+      <div class="col-9" style="padding: 0;">
         <div id="map" class="map"></div>
         <div id="popup" class="ol-popup">
           <a href="#" id="popup-closer" class="ol-popup-closer"></a>
           <div id="popup-content"></div>
         </div>
       </div>
-      <div class="savedData">
+      <div class="col-3 savedData">
         <div class="savedData__header">
-          <h2>🚩 Locais Salvos</h2>
-
-          <table>
+          <h2>🚩 Locais Salvos</h2>          
+        </div>
+        <div class="savedData_content">
+          <table class="table">
             <thead>
               <tr>
                 <th>Localização</th>
@@ -29,34 +32,83 @@
                 <th>Salvo no banco</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="position"></td>
-                <td class="savedInMemory"></td>
-                <td class="savedInDB"></td>
-              </tr>
+            <tbody class="item">
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
     <script type="module" src="main.js"></script>
   </body>
   <script>
+    const ws = new WebSocket("ws://127.0.0.1:6969");
+ 
     function insert(coord) {
+      var [latitude, longitude] = coord.split(',');
+      var id = `${latitude}${longitude}`;
+      var item = { "id": id, "latitude" : latitude, "longitude": longitude};
+      content = JSON.stringify(item);
+
       var position = document.createElement('td');
       var savedInMemory = document.createElement('td');
       var savedInDB = document.createElement('td');
+      var row = document.createElement('tr');
 
+      row.setAttribute('id', `${id}`);
+      savedInMemory.setAttribute("class", "memory");
+      savedInDB.setAttribute("class", "db");
 
-      position.innerHTML = coord;
-      savedInMemory.innerHTML = '✔';
+      position.innerHTML = coord.split(',')[0] + ' ' + coord.split(',')[1];
+      savedInMemory.innerHTML = '❌';
       savedInDB.innerHTML = '❌';
+      row.innerHTML = '';
 
-      document.querySelector('.position').appendChild(position);
-      document.querySelector('.savedInMemory').appendChild(savedInMemory);
-      document.querySelector('.savedInDB').appendChild(savedInDB);
+      document.querySelector('.item').appendChild(row);
+      row.appendChild(position);
+      row.appendChild(savedInMemory);
+      row.appendChild(savedInDB);
+
+      elements = document.getElementsByTagName('td');
+      ws.send(content);
     }
+
+    ws.onmessage = function(event) {
+      var data = JSON.parse(event.data);
+
+      if(data.type == "local") {
+        var {type, id} = JSON.parse(event.data);
+        document.getElementById(id).getElementsByClassName('memory')[0].innerHTML = '✔';
+      } else if (data.type == "online") {
+        var {type, id} = JSON.parse(event.data);
+        document.getElementById(id).getElementsByClassName('db')[0].innerHTML = '✔';
+      } else {
+        var items = data.data
+        items.forEach(element => {
+          console.log(element);
+
+          var position = document.createElement('td');
+          var savedInMemory = document.createElement('td');
+          var savedInDB = document.createElement('td');
+          var row = document.createElement('tr');
+
+          row.setAttribute('id', `${element.id}`);
+          savedInMemory.setAttribute("class", "memory");
+          savedInDB.setAttribute("class", "db");
+
+          position.innerHTML = element.latitude + ' ' + element.longitude;
+          savedInMemory.innerHTML = element.savedInLocal > 0 ? '✔' : '❌';
+          savedInDB.innerHTML = element.savedInDB > 0 ? '✔' : '❌';
+          row.innerHTML = '';
+
+          document.querySelector('.item').appendChild(row);
+          row.appendChild(position);
+          row.appendChild(savedInMemory);
+          row.appendChild(savedInDB);
+          
+        });
+      }
+    }      
+
+
   </script>
 </html>
