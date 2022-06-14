@@ -520,7 +520,6 @@ var _coordinate = require("ol/coordinate");
 const container = document.getElementById("popup");
 const content = document.getElementById("popup-content");
 const closer = document.getElementById("popup-closer");
-const savedItems = document.getElementById("savedItems");
 const overlay = new (0, _overlayDefault.default)({
     element: container
 });
@@ -547,19 +546,19 @@ const map = new (0, _mapDefault.default)({
     target: "map",
     view: new (0, _viewDefault.default)({
         center: [
-            -54.54989633017405,
-            -25.519517238580367
+            0,
+            0
         ],
         zoom: 4
     })
 });
 map.on("singleclick", function(evt) {
     const coordinate = evt.coordinate;
-    const coord = (0, _coordinate.toStringHDMS)((0, _proj.toLonLat)(coordinate));
+    const coord = (0, _proj.toLonLat)(coordinate).toString();
     content.innerHTML = `<p>Você clicou em:</p>
-  <code>${coord}</code></br></br>
-  <input type="text" id="description"></input>
-  <button onclick="insert('${coord}')">Salvar</button>`;
+  <p>Longitude: <code>${coordinate[0]}</code></p>
+  <p>Latitude: <code>${coordinate[1]}</code></p>
+  <button class="btn btn-primary" onclick="insert('${coord}')">Salvar</button>`;
     overlay.setPosition(coordinate);
 });
 
